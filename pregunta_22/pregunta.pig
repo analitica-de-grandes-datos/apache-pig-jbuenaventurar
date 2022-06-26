@@ -21,4 +21,15 @@ $ pig -x local -f pregunta.pig
 
         >>> Escriba su respuesta a partir de este punto <<<
 */
-
+lineas = LOAD 'data.csv' USING PigStorage(',')
+    AS (
+            numero:int,
+            nombre:chararray,
+            apellido:chararray,
+            fecha:chararray,
+            color:chararray,
+            last_number:int
+    );
+colores = FOREACH lineas GENERATE nombre, color;
+selected = FILTER colores by (color matches '.*n$.*'); 
+STORE selected INTO 'output/' USING PigStorage(',');
