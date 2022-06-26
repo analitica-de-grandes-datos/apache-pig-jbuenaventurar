@@ -18,5 +18,16 @@ $ pig -x local -f pregunta.pig
 
         >>> Escriba su respuesta a partir de este punto <<<
 */
+lineas = LOAD 'data.csv' USING PigStorage(',')
+    AS (
+            numero:int,
+            nombre:chararray,
+            apellido:chararray,
+            fecha:chararray,
+            color:chararray,
+            last_number:int
+    );
+birthdays = FOREACH lineas GENERATE FLATTEN(REGEX_EXTRACT(fecha, '([0-9]+)-([0-9]+)-([0-9]+)', 2)) AS month;
+STORE birthdays INTO 'output' USING PigStorage(',');
 
 

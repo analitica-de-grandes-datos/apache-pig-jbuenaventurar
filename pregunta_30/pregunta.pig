@@ -33,4 +33,55 @@ $ pig -x local -f pregunta.pig
 
         >>> Escriba su respuesta a partir de este punto <<<
 */
+lineas = LOAD 'data.csv' USING PigStorage(',')
+    AS (
+            numero:int,
+            nombre:chararray,
+            apellido:chararray,
+            fecha:chararray,
+            color:chararray,
+            last_number:int
+    );
+months = FOREACH lineas GENERATE fecha,
+SUBSTRING(fecha, 8, 10) as n0, 
+GetDay(ToDate(fecha, 'yyyy-MM-dd')) AS nday,
+LOWER(ToString(ToDate(fecha, 'yyyy-MM-dd'), 'EEE')) AS dia,
+LOWER(ToString(ToDate(fecha, 'yyyy-MM-dd'), 'EEEE')) AS ndia;
 
+A = FOREACH months GENERATE fecha,
+n0,
+nday,
+REPLACE(dia, 'mon', 'lun') AS day1,
+REPLACE(ndia, 'monday', 'lunes') AS ndia1;
+
+B = FOREACH A GENERATE fecha,
+n0,
+nday,
+REPLACE(day1, 'thu', 'jue') AS day2,
+REPLACE(ndia1, 'thursday', 'jueves') AS ndia2;
+
+C = FOREACH B GENERATE fecha,
+n0,
+nday,
+REPLACE(day2, 'sun', 'dom') AS day3,
+REPLACE(ndia2, 'sunday', 'domingo') AS ndia3;
+
+D = FOREACH C GENERATE fecha,
+n0,
+nday,
+REPLACE(day3, 'wed', 'mie') AS day4,
+REPLACE(ndia3, 'wednesday', 'miercoles') AS ndia4;
+
+E = FOREACH D GENERATE fecha,
+n0,
+nday,
+REPLACE(day4, 'fri', 'vie') AS day5,
+REPLACE(ndia4, 'friday', 'viernes') AS ndia5;
+
+F = FOREACH E GENERATE fecha,
+n0,
+nday,
+REPLACE(day5, 'tue', 'mar') AS day6,
+REPLACE(ndia5, 'tuesday', 'martes') AS ndia6;
+
+STORE F INTO 'output' USING PigStorage(',');
