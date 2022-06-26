@@ -30,4 +30,5 @@ lineas = LOAD 'data.csv' USING PigStorage(',')
     );
 fields = FOREACH lineas GENERATE nombre, color;
 selected = FILTER fields by (nombre matches '.*Z.*') AND (color matches '.*blue.*'); 
-STORE selected INTO 'output/' USING PigStorage(',');
+def = FOREACH selected GENERATE CONCAT(nombre,' ',color);
+STORE def INTO 'output/' USING PigStorage(',');
